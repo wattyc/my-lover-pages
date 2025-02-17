@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>祝福动画</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #2c3e50;
+            color: white;
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+            padding: 20px;
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .message {
+            font-size: 2em;
+            opacity: 0;
+            animation: fadeInOut 4s ease-in-out infinite;
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 1; }
+        }
+
+        .heart {
+            position: absolute;
+            width: 100px;
+            height: 90px;
+            background: red;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(45deg);
+            animation: heartPulse 2s infinite;
+        }
+
+        .heart::before,
+        .heart::after {
+            content: "";
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background: red;
+            border-radius: 50px;
+            top: -50px;
+            left: 0;
+        }
+
+        .heart::after {
+            left: -50px;
+            top: 0;
+        }
+
+        @keyframes heartPulse {
+            0%, 100% {
+                transform: translate(-50%, -50%) scale(1) rotate(45deg);
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.5) rotate(45deg);
+            }
+        }
+
+        .cloud {
+            position: absolute;
+            width: 150px;
+            height: 70px;
+            background: white;
+            border-radius: 100px;
+            top: 20%;
+            left: 10%;
+            opacity: 0;
+            animation: cloudMove 10s ease-in-out forwards;
+        }
+
+        .cloud::before,
+        .cloud::after {
+            content: "";
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background: white;
+            border-radius: 100px;
+            top: -30px;
+            left: 20px;
+        }
+
+        .cloud::after {
+            left: 80px;
+            top: -10px;
+        }
+
+        @keyframes cloudMove {
+            0% {
+                left: 10%;
+                opacity: 0;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                left: 90%;
+                opacity: 0;
+            }
+        }
+
+        .final-message {
+            font-size: 1.5em;
+            opacity: 0;
+            animation: finalMessageFadeIn 2s ease-in-out forwards;
+        }
+
+        @keyframes finalMessageFadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="message" id="message1">预祝曼彤农场之旅顺利找到方向</div>
+        <div class="message" id="message2">耶稣爱你</div>
+        <div class="heart"></div>
+        <div class="cloud"></div>
+        <div class="final-message" id="finalMessage">愿你旅途愉快！</div>
+    </div>
+
+    <script>
+        // 获取消息元素
+        const message1 = document.getElementById('message1');
+        const message2 = document.getElementById('message2');
+        const finalMessage = document.getElementById('finalMessage');
+
+        // 设置初始状态
+        let currentMessage = 1;
+
+        function animateMessages() {
+            if (currentMessage === 1) {
+                message1.style.animation = 'fadeInOut 4s ease-in-out forwards';
+                setTimeout(() => {
+                    message1.style.opacity = 0;
+                    message2.style.animation = 'fadeInOut 4s ease-in-out forwards';
+                    currentMessage = 2;
+                }, 4000); // 每条消息持续4秒
+            } else {
+                message2.style.animation = 'fadeInOut 4s ease-in-out forwards';
+                setTimeout(() => {
+                    message2.style.opacity = 0;
+                    finalMessage.style.animation = 'finalMessageFadeIn 2s ease-in-out forwards';
+                }, 4000);
+            }
+        }
+
+        // 开始动画循环
+        setTimeout(animateMessages, 1000); // 延迟1秒开始动画
+    </script>
+</body>
+</html>
