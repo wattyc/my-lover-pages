@@ -1,175 +1,191 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <style>
-        :root {
-            --scene-width: 800px;
-            --scene-height: 500px;
-        }
+<style>
+:root {
+  --pixel: 8px;
+  --scene-duration: 15s;
+}
 
-        body {
-            margin: 0;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: #000;
-            overflow: hidden;
-            font-family: 'Amatic SC', cursive;
-        }
+body {
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #000;
+  overflow: hidden;
+}
 
-        .stage {
-            width: var(--scene-width);
-            height: var(--scene-height);
-            position: relative;
-            overflow: hidden;
-        }
+.stage {
+  width: 320px;
+  height: 240px;
+  position: relative;
+  transform: scale(2);
+}
 
-        /* 通用动画类 */
-        .scene {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            opacity: 0;
-            animation: sceneChange 10s infinite;
-        }
+/* 通用像素元素 */
+.pixel-grid {
+  display: grid;
+  position: absolute;
+  transition: 0.5s;
+}
 
-        /* 第一幕：农场入口 */
-        #scene1 {
-            background: linear-gradient(#87CEEB 60%, #90EE90);
-            animation-delay: 0s;
-        }
-        .girl {
-            position: absolute;
-            left: -100px;
-            bottom: 150px;
-            width: 80px;
-            animation: girlEnter 3s forwards;
-        }
-        .animal-group {
-            position: absolute;
-            right: -200px;
-            bottom: 140px;
-            animation: friendsEnter 2s 3s forwards;
-        }
+/* 场景容器 */
+.scene {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  animation: scene-switch var(--scene-duration) infinite;
+}
 
-        /* 第二幕：教堂场景 */
-        #scene2 {
-            background: linear-gradient(#4682B4, #87CEEB);
-            animation-delay: 4s;
-        }
-        .priest {
-            position: absolute;
-            left: 50%;
-            bottom: 100px;
-            transform: translateX(-50%);
-            width: 60px;
-            opacity: 0;
-            animation: priestAppear 2s 4s forwards;
-        }
-        .church-window {
-            position: absolute;
-            top: 20%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 200px;
-            opacity: 0;
-            animation: elementFadeIn 1s 5s forwards;
-        }
+/* === 角色设计 === */
+/* 小女孩 */
+.girl {
+  grid-template-columns: repeat(4, var(--pixel));
+  bottom: 40px;
+  left: 50px;
+  z-index: 2;
+}
+.girl > div {
+  background: #FFB6C1; /* 粉色衣服 */
+  height: var(--pixel);
+}
+.girl > div:nth-child(5),
+.girl > div:nth-child(9) { background: #FF69B4; } /* 深粉色装饰 */
+.girl > div:nth-child(2),
+.girl > div:nth-child(3) { background: #8B4513; } /* 棕色头发 */
 
-        /* 第三幕：祝福场景 */
-        #scene3 {
-            background: radial-gradient(circle at center, #FFD700, #FFA500);
-            animation-delay: 7s;
-        }
-        .jesus {
-            position: absolute;
-            left: 50%;
-            bottom: 50px;
-            transform: translateX(-50%);
-            width: 120px;
-            opacity: 0;
-            animation: jesusRise 3s 7s forwards;
-        }
-        .final-text {
-            position: absolute;
-            top: 20%;
-            width: 100%;
-            text-align: center;
-            font-size: 2.5em;
-            color: #FFF;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-            opacity: 0;
-            animation: textGlow 3s 9s forwards;
-        }
+/* 神父 */
+.priest {
+  grid-template-columns: repeat(3, var(--pixel));
+  bottom: 80px;
+  left: 150px;
+}
+.priest > div {
+  background: #708090; /* 灰色长袍 */
+  height: var(--pixel);
+}
+.priest > div:nth-child(4) { background: #000; } /* 黑色腰带 */
 
-        /* 动画关键帧 */
-        @keyframes sceneChange {
-            0%, 33.3% { opacity: 0; }
-            3%, 30% { opacity: 1; }
-            33.3%, 100% { opacity: 0; }
-        }
+/* 教堂 */
+.church {
+  width: 120px;
+  height: 160px;
+  left: 100px;
+  bottom: 0;
+  grid-template-columns: repeat(15, var(--pixel));
+  grid-auto-rows: var(--pixel);
+  background: linear-gradient(#8B4513, #654321); /* 木质结构 */
+}
 
-        @keyframes girlEnter {
-            to { left: 150px; }
-        }
+/* 十字架 */
+.cross {
+  grid-template-columns: repeat(5, var(--pixel));
+  left: 200px;
+  top: 60px;
+}
+.cross > div {
+  background: #B22222; /* 暗红色 */
+  height: var(--pixel);
+}
 
-        @keyframes friendsEnter {
-            to { right: 50px; }
-        }
+/* === 动画定义 === */
+@keyframes scene-switch {
+  0%, 100% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  5%, 30% { /* 第一幕 0-4.5秒 */
+    opacity: 1;
+    transform: scale(1);
+  }
+  35%, 60% { /* 第二幕 5-9秒 */
+    opacity: 1;
+    transform: translateX(-80px) scale(1.2);
+  }
+  65%, 95% { /* 第三幕 9.5-14.5秒 */
+    opacity: 1;
+    transform: translateX(80px) scale(1.5);
+  }
+}
 
-        @keyframes priestAppear {
-            to { opacity: 1; bottom: 130px; }
-        }
+/* 元素动画 */
+.girl { animation: walk 2s infinite alternate; }
+@keyframes walk {
+  to { transform: translateX(20px); }
+}
 
-        @keyframes jesusRise {
-            to { opacity: 1; bottom: 150px; }
-        }
+.cross { animation: glow 3s infinite; }
+@keyframes glow {
+  50% { filter: brightness(1.5); }
+}
 
-        @keyframes textGlow {
-            to { opacity: 1; text-shadow: 0 0 20px white; }
-        }
+/* 场景容器 */
+#scene1 { animation-delay: 0s; }
+#scene2 { animation-delay: 5s; }
+#scene3 { animation-delay: 10s; }
 
-        @keyframes elementFadeIn {
-            to { opacity: 1; }
-        }
-    </style>
-    <link href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@700&display=swap" rel="stylesheet">
-</head>
-<body>
-    <div class="stage">
-        <!-- 第一幕：农场入口 -->
-        <div class="scene" id="scene1">
-            <img src="https://img.icons8.com/emoji/96/000000/girl-medium-light-skin-tone.png" 
-                 class="girl" alt="小女孩">
-            <div class="animal-group">
-                <img src="https://img.icons8.com/emoji/96/000000/chicken-emoji.png" alt="小鸡">
-                <img src="https://img.icons8.com/emoji/96/000000/dog-emoji.png" alt="小狗">
-            </div>
-        </div>
+/* 自动生成像素结构 */
+<div class="scene" id="scene1">
+  <!-- 小女孩 4x3像素 -->
+  <div class="pixel-grid girl" style="grid-template-rows: repeat(3, var(--pixel))">
+    <div></div><div></div><div></div><div></div>
+    <div></div><div></div><div></div><div></div>
+    <div></div><div></div><div></div><div></div>
+  </div>
+  
+  <!-- 小伙伴 3x2像素 -->
+  <div class="pixel-grid" style="grid-template: repeat(2, var(--pixel))/repeat(3, var(--pixel)); bottom:40px; left:120px; background:#FFD700">
+    <div></div><div style="background:#8B4513"></div><div></div>
+    <div></div><div style="background:#8B4513"></div><div></div>
+  </div>
+</div>
 
-        <!-- 第二幕：教堂场景 -->
-        <div class="scene" id="scene2">
-            <img src="https://img.icons8.com/emoji/96/000000/man-beard.png" 
-                 class="priest" alt="神父">
-            <img src="https://img.icons8.com/color/96/000000/stained-glass.png" 
-                 class="church-window" alt="教堂彩窗">
-        </div>
+<div class="scene" id="scene2">
+  <!-- 教堂 -->
+  <div class="pixel-grid church">
+    <!-- 教堂结构像素点 -->
+    <div style="grid-area:1/5/2/11; background:#808080"></div>
+    <div style="grid-area:2/3/3/13; background:#A9A9A9"></div>
+    <!-- 更多建筑细节... -->
+  </div>
+  
+  <!-- 神父 -->
+  <div class="pixel-grid priest" style="grid-template-rows: repeat(4, var(--pixel))">
+    <div></div><div></div><div></div>
+    <div></div><div></div><div></div>
+    <div></div><div></div><div></div>
+    <div></div><div></div><div></div>
+  </div>
+</div>
 
-        <!-- 第三幕：祝福场景 -->
-        <div class="scene" id="scene3">
-            <img src="https://img.icons8.com/color/96/000000/jesus-christ.png" 
-                 class="jesus" alt="耶稣">
-            <div class="final-text">
-                曼彤的农场之旅必定蒙福！<br>
-                ✝ 耶稣爱你 ✝
-            </div>
-        </div>
-    </div>
+<div class="scene" id="scene3">
+  <!-- 大型十字架 -->
+  <div class="pixel-grid cross" style="grid-template-rows: repeat(7, var(--pixel))">
+    <div></div><div></div><div></div><div></div><div></div>
+    <div></div><div></div><div style="background:#FFD700"></div><div></div><div></div>
+    <!-- 更多十字架细节... -->
+  </div>
+</div>
 
-    <script>
-        // 自动循环播放
-        setTimeout(() => location.reload(), 10500);
-    </script>
+<script>
+// 自动生成基础像素结构
+document.querySelectorAll('.pixel-grid').forEach(grid => {
+  const cols = grid.style.gridTemplateColumns.split(' ')[0].replace('repeat(', '').replace(', var(--pixel))','');
+  const rows = grid.style.gridTemplateRows?.split(' ')[0].replace('repeat(', '').replace(', var(--pixel))','') || 1;
+  const total = cols * rows;
+  
+  // 清空现有内容
+  grid.innerHTML = '';
+  
+  // 生成像素点
+  for(let i=0; i<total; i++){
+    const pixel = document.createElement('div');
+    grid.appendChild(pixel);
+  }
+});
+</script>
 </body>
 </html>
